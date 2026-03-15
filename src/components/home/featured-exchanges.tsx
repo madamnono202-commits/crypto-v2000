@@ -3,6 +3,7 @@ import { ExternalLink, Star, Gift } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { type ExchangeWithOffers } from "@/lib/data/exchanges";
+import { buildClickUrl } from "@/lib/affiliate";
 
 export function FeaturedExchanges({
   exchanges,
@@ -68,7 +69,7 @@ export function FeaturedExchanges({
                 {/* CTA */}
                 <Button asChild size="sm" className="w-full">
                   <a
-                    href={exchange.affiliateUrl || "#"}
+                    href={buildClickUrl(exchange.id, "homepage-featured")}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

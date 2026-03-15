@@ -23,6 +23,7 @@ import {
   type ExchangeDetail,
 } from "@/lib/data/exchanges";
 import { siteConfig } from "@/config/site";
+import { buildClickUrl } from "@/lib/affiliate";
 
 interface ExchangePageProps {
   params: { slug: string };
@@ -247,7 +248,7 @@ export default async function ExchangePage({ params }: ExchangePageProps) {
             </div>
             <Button asChild size="lg" className="w-full sm:w-auto">
               <a
-                href={exchange.affiliateUrl || "#"}
+                href={buildClickUrl(exchange.id, "exchange-detail")}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -315,7 +316,7 @@ export default async function ExchangePage({ params }: ExchangePageProps) {
               </div>
               <Button asChild size="sm" className="w-full sm:w-auto shrink-0">
                 <a
-                  href={exchange.affiliateUrl || "#"}
+                  href={buildClickUrl(exchange.id, "exchange-detail-offer")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

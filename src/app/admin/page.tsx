@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Settings, Database, FileText, BarChart3, Users } from "lucide-react";
 import { Section } from "@/components/ui/section";
 
@@ -8,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 const adminSections = [
-  { icon: Database, title: "Exchanges", description: "Manage exchange listings and data" },
-  { icon: FileText, title: "Blog Posts", description: "Create and edit blog content" },
-  { icon: BarChart3, title: "Analytics", description: "View traffic and affiliate clicks" },
-  { icon: Users, title: "Users", description: "Manage user accounts" },
+  { icon: Database, title: "Exchanges", description: "Manage exchange listings and data", href: null },
+  { icon: FileText, title: "Blog Posts", description: "Create and edit blog content", href: null },
+  { icon: BarChart3, title: "Analytics", description: "View traffic and affiliate clicks", href: "/admin/affiliate" },
+  { icon: Users, title: "Users", description: "Manage user accounts", href: null },
 ];
 
 export default function AdminPage() {
@@ -33,25 +34,37 @@ export default function AdminPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {adminSections.map((section) => (
-            <div
-              key={section.title}
-              className="rounded-xl border border-border/60 bg-card p-6 space-y-2 cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
-            >
-              <div className="flex items-center gap-3">
-                <section.icon className="h-5 w-5 text-muted-foreground" />
-                <h2 className="font-semibold">{section.title}</h2>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {section.description}
-              </p>
-            </div>
-          ))}
-        </div>
+          {adminSections.map((section) => {
+            const content = (
+              <>
+                <div className="flex items-center gap-3">
+                  <section.icon className="h-5 w-5 text-muted-foreground" />
+                  <h2 className="font-semibold">{section.title}</h2>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {section.description}
+                </p>
+              </>
+            );
 
-        <p className="text-center text-xs text-muted-foreground">
-          Admin functionality will be implemented in a future task.
-        </p>
+            return section.href ? (
+              <Link
+                key={section.title}
+                href={section.href}
+                className="rounded-xl border border-border/60 bg-card p-6 space-y-2 cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
+              >
+                {content}
+              </Link>
+            ) : (
+              <div
+                key={section.title}
+                className="rounded-xl border border-border/60 bg-card p-6 space-y-2 cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
+              >
+                {content}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Section>
   );

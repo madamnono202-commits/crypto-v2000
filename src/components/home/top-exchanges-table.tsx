@@ -3,6 +3,7 @@ import { ExternalLink, Star } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { type ExchangeWithOffers } from "@/lib/data/exchanges";
+import { buildClickUrl } from "@/lib/affiliate";
 
 function ScoreBadge({ score }: { score: number }) {
   let color = "bg-green-500/10 text-green-600";
@@ -100,7 +101,7 @@ export function TopExchangesTable({
                     <td className="px-6 py-4 text-right">
                       <Button asChild size="sm" variant="outline">
                         <a
-                          href={exchange.affiliateUrl || "#"}
+                          href={buildClickUrl(exchange.id, "homepage")}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -151,7 +152,7 @@ export function TopExchangesTable({
                 <div className="pl-8">
                   <Button asChild size="sm" className="w-full">
                     <a
-                      href={exchange.affiliateUrl || "#"}
+                      href={buildClickUrl(exchange.id, "homepage")}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

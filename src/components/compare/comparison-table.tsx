@@ -6,6 +6,7 @@ import { ExternalLink, Star, Check, X, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { type ExchangeForComparison } from "@/lib/data/exchanges";
+import { buildClickUrl } from "@/lib/affiliate";
 
 // ─── Filter State ──────────────────────────────────────────────────────────────
 
@@ -360,14 +361,9 @@ export function ComparisonTable({
                   <td className="px-4 py-4 text-right">
                     <Button asChild size="sm">
                       <a
-                        href={exchange.affiliateUrl || "#"}
+                        href={buildClickUrl(exchange.id, "compare")}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          // Placeholder: affiliate tracking will be wired later
-                          window.open(exchange.affiliateUrl || "#", "_blank");
-                        }}
                       >
                         Open Account
                         <ExternalLink className="ml-1.5 h-3 w-3" />
@@ -485,13 +481,9 @@ export function ComparisonTable({
               <div className="pl-8">
                 <Button asChild size="sm" className="w-full">
                   <a
-                    href={exchange.affiliateUrl || "#"}
+                    href={buildClickUrl(exchange.id, "compare")}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.open(exchange.affiliateUrl || "#", "_blank");
-                    }}
                   >
                     Open Account
                     <ExternalLink className="ml-1.5 h-3 w-3" />
