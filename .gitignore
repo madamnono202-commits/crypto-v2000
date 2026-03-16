@@ -41,3 +41,5 @@ next-env.d.ts
 # OpenNext / Cloudflare build output
 .worker.next/
 .open-next/
+blog-generator/node_modules/
+blog-generator/dist/

@@ -3,16 +3,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-
 /**
- * GET /api/content-engine/runs
+ * GET /api/blog-generator/runs
  *
- * Fetch recent automation runs with their logs.
+ * Fetch recent automation runs from the shared database.
+ * These runs are created by the Blog Generator service (Project 1).
  * Requires admin authentication.
+ *
  * Query params: limit (default 10), includelogs (default false)
  */
 export async function GET(request: Request) {
-  // Require admin authentication
   const session = await getServerSession(authOptions);
   if (!session?.user || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ runs });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[ContentEngine] Runs fetch error:", message);
+    console.error("[BlogGenerator Proxy] Runs fetch error:", message);
 
     return NextResponse.json(
       { success: false, error: message },
