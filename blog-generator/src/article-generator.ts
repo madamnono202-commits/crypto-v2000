@@ -103,7 +103,6 @@ function parseArticleResponse(
   response: string,
   topic: TrendingTopic
 ): GeneratedArticle {
-  // Extract JSON metadata block
   const jsonMatch = response.match(/```json\s*([\s\S]*?)```/);
   let metadata = {
     metaTitle: "",
@@ -128,13 +127,11 @@ function parseArticleResponse(
     }
   }
 
-  // Extract article content (everything before the JSON block)
   let content = response;
   if (jsonMatch) {
     content = response.substring(0, jsonMatch.index).trim();
   }
 
-  // Generate slug from suggested or topic title
   const slug =
     metadata.suggestedSlug ||
     topic.title
@@ -144,9 +141,7 @@ function parseArticleResponse(
       .replace(/-+/g, "-")
       .substring(0, 80);
 
-  // Fallback meta title/description if not provided
-  const metaTitle =
-    metadata.metaTitle || topic.title.substring(0, 60);
+  const metaTitle = metadata.metaTitle || topic.title.substring(0, 60);
   const metaDescription =
     metadata.metaDescription ||
     topic.description.substring(0, 160) ||

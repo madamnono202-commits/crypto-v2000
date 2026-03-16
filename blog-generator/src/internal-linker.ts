@@ -6,9 +6,6 @@ type ExchangeLink = {
   keywords: string[];
 };
 
-/**
- * Known exchanges and the keywords that should trigger internal linking.
- */
 const EXCHANGE_LINKS: ExchangeLink[] = [
   {
     name: "Binance",
@@ -49,17 +46,11 @@ export async function insertInternalLinks(
   let linksInserted = 0;
 
   for (const exchange of EXCHANGE_LINKS) {
-    // Skip if already linked (contains a markdown link to this exchange)
     if (linkedContent.includes(`(/exchanges/${exchange.slug})`)) {
       continue;
     }
 
-    // Find the first occurrence of the exchange name that is NOT inside:
-    // - A markdown link [...](...) 
-    // - A heading ## or ###
-    // - Already bold **...**
     for (const keyword of exchange.keywords) {
-      // Case-insensitive match for the keyword, but NOT inside a markdown link or heading
       const regex = new RegExp(
         `(?<!\\[)(?<!\\*\\*)(?<!#+ )\\b(${escapeRegex(keyword)})\\b(?![^\\[]*\\])(?!\\*\\*)`,
         "i"
@@ -74,12 +65,11 @@ export async function insertInternalLinks(
           link +
           linkedContent.substring(match.index + originalText.length);
         linksInserted++;
-        break; // Only link first occurrence per exchange
+        break;
       }
     }
   }
 
-  // Also add a comparison page link if the article discusses multiple exchanges
   const exchangesMentioned = EXCHANGE_LINKS.filter((e) =>
     content.toLowerCase().includes(e.name.toLowerCase())
   );
@@ -87,7 +77,6 @@ export async function insertInternalLinks(
   if (exchangesMentioned.length >= 2) {
     const hasCompareLink = linkedContent.includes("(/compare)");
     if (!hasCompareLink) {
-      // Add a contextual CTA before the conclusion or at the end
       const conclusionIndex = linkedContent.search(/^## Conclusion/im);
       const ctaBlock = `\n\n> **Compare Exchanges:** Use our [exchange comparison tool](/compare) to see how these platforms stack up side by side.\n\n`;
 

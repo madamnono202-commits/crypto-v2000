@@ -1,5 +1,3 @@
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { logToRun } from "./logger";
 
 const HUGGINGFACE_API_URL =
@@ -8,7 +6,11 @@ const HUGGINGFACE_API_URL =
 /**
  * Generate a featured image for a blog article using Stable Diffusion
  * via the HuggingFace Inference API.
- * Returns the relative URL path to the saved image.
+ * Returns the base64 data URI of the generated image, or null if generation fails.
+ *
+ * Note: Unlike the monolith version, this does NOT save to the filesystem.
+ * The image data is stored directly in the database as a URL or base64 reference.
+ * For production, you should upload to an object store (S3, R2, etc.) and return the URL.
  */
 export async function generateFeaturedImage(
   runId: string,
@@ -18,14 +20,20 @@ export async function generateFeaturedImage(
   const apiKey = process.env.HUGGINGFACE_API_KEY;
 
   if (!apiKey) {
-    await logToRun(runId, "warn", "HUGGINGFACE_API_KEY not configured, skipping image generation");
+    await logToRun(
+      runId,
+      "warn",
+      "HUGGINGFACE_API_KEY not configured, skipping image generation"
+    );
     return null;
   }
 
   const prompt = buildImagePrompt(articleTitle);
 
   try {
-    await logToRun(runId, "info", `Generating featured image for: ${slug}`, { prompt });
+    await logToRun(runId, "info", `Generating featured image for: ${slug}`, {
+      prompt,
+    });
 
     const response = await fetch(HUGGINGFACE_API_URL, {
       method: "POST",
@@ -46,37 +54,32 @@ export async function generateFeaturedImage(
 
     if (!response.ok) {
       const errorText = await response.text();
-      await logToRun(runId, "error", `HuggingFace API error: ${response.status}`, {
-        error: errorText,
-        slug,
-      });
+      await logToRun(
+        runId,
+        "error",
+        `HuggingFace API error: ${response.status}`,
+        { error: errorText, slug }
+      );
       return null;
     }
 
     const imageBuffer = Buffer.from(await response.arrayBuffer());
+    const base64 = imageBuffer.toString("base64");
+    const imageUrl = `data:image/png;base64,${base64}`;
 
-    // Save to public/images/blog/
-    const imageDir = join(process.cwd(), "public", "images", "blog");
-    await mkdir(imageDir, { recursive: true });
-
-    const filename = `${slug}.png`;
-    const filepath = join(imageDir, filename);
-    await writeFile(filepath, imageBuffer);
-
-    const imageUrl = `/images/blog/${filename}`;
-
-    await logToRun(runId, "info", `Featured image saved: ${imageUrl}`, { slug });
+    await logToRun(runId, "info", `Featured image generated for: ${slug}`);
 
     return imageUrl;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    await logToRun(runId, "error", `Image generation failed: ${message}`, { slug });
+    await logToRun(runId, "error", `Image generation failed: ${message}`, {
+      slug,
+    });
     return null;
   }
 }
 
 function buildImagePrompt(articleTitle: string): string {
-  // Create a clean, professional image prompt from the article title
   const cleanTitle = articleTitle
     .replace(/[^a-zA-Z0-9\s]/g, "")
     .toLowerCase()

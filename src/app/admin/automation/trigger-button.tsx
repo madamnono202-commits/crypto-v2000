@@ -13,13 +13,12 @@ export function TriggerButton() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/content-engine/trigger", {
+      const response = await fetch("/api/blog-generator/trigger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topicLimit: 3,
           publishAsDraft: true,
-          mode: "direct",
         }),
       });
 

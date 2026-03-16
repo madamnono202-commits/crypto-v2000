@@ -5,28 +5,25 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx opennextjs-cloudflare build && mkdir -p .open-next/assets/_worker.js && cp .open-next/worker.js .open-next/assets/_worker.js/index.js && cp -r .open-next/server-functions .open-next/assets/_worker.js/ && cp -r .open-next/cloudflare .open-next/assets/_worker.js/ && cp -r .open-next/middleware .open-next/assets/_worker.js/ && cp -r .open-next/.build .open-next/assets/_worker.js/",
+    "pages:build": "npx opennextjs-cloudflare build && mkdir -p .open-next/assets/_worker.js && cp .open-next/worker.js .open-next/assets/_worker.js/index.js && cp -r .open-next/server-functions .open-next/assets/_worker.js/ && rm -rf .open-next/assets/_worker.js/server-functions/*/node_modules && cp -r .open-next/cloudflare .open-next/assets/_worker.js/ && cp -r .open-next/middleware .open-next/assets/_worker.js/ && cp -r .open-next/.build .open-next/assets/_worker.js/",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
-    "worker:start": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' src/lib/queue/start-worker.ts"
+    "worker:start": "echo 'Blog generation has moved to blog-generator/ project. Use: cd blog-generator && npm run dev'"
   },
   "prisma": {
     "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.78.0",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@radix-ui/react-slot": "^1.2.4",
     "@upstash/redis": "^1.37.0",
     "bcryptjs": "^3.0.3",
-    "bullmq": "^5.71.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
-    "ioredis": "^5.10.0",
     "lucide-react": "^0.577.0",
     "next": "14.2.35",
     "next-auth": "^4.24.13",

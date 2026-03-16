@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { logToRun, updateRunStatus } from "./logger";
+import { query, queryOne } from "./db";
+import { createRun, logToRun, updateRunStatus } from "./logger";
 import { fetchTrendingTopics } from "./news-fetcher";
 import { generateArticle } from "./article-generator";
 import { generateFeaturedImage } from "./image-generator";
@@ -20,6 +20,15 @@ export type PipelineResult = {
 };
 
 /**
+ * Generate a cuid-like ID without external dependencies.
+ */
+function generateId(): string {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 10);
+  return `clg${timestamp}${random}`;
+}
+
+/**
  * Run the full content generation pipeline:
  * 1. Fetch trending topics from NewsAPI
  * 2. Generate articles with Claude
@@ -32,16 +41,7 @@ export async function runContentPipeline(
 ): Promise<PipelineResult> {
   const { topicLimit = 3, publishAsDraft = true } = options;
 
-  // Create automation run record
-  const run = await prisma.automationRun.create({
-    data: {
-      jobType: "content-generation",
-      status: "running",
-      startedAt: new Date(),
-    },
-  });
-
-  const runId = run.id;
+  const runId = await createRun();
   let articlesCreated = 0;
   let imagesGenerated = 0;
   let errorCount = 0;
@@ -84,14 +84,18 @@ export async function runContentPipeline(
           .replace(/\s+/g, "-")
           .substring(0, 80);
 
-        const existing = await prisma.blogPost.findUnique({
-          where: { slug: existingSlug },
-        });
+        const existing = await queryOne<{ slug: string }>(
+          "SELECT slug FROM blog_posts WHERE slug = $1",
+          [existingSlug]
+        );
 
         if (existing) {
-          await logToRun(runId, "warn", `Skipping duplicate topic: ${topic.title}`, {
-            existingSlug,
-          });
+          await logToRun(
+            runId,
+            "warn",
+            `Skipping duplicate topic: ${topic.title}`,
+            { existingSlug }
+          );
           continue;
         }
 
@@ -104,12 +108,12 @@ export async function runContentPipeline(
         }
 
         // Check for duplicate slug from generated article
-        const existingArticle = await prisma.blogPost.findUnique({
-          where: { slug: article.slug },
-        });
+        const existingArticle = await queryOne<{ slug: string }>(
+          "SELECT slug FROM blog_posts WHERE slug = $1",
+          [article.slug]
+        );
 
         if (existingArticle) {
-          // Append timestamp to make unique
           article.slug = `${article.slug}-${Date.now()}`;
         }
 
@@ -119,29 +123,42 @@ export async function runContentPipeline(
         // Generate featured image
         let featuredImage: string | null = null;
         try {
-          featuredImage = await generateFeaturedImage(runId, article.title, article.slug);
+          featuredImage = await generateFeaturedImage(
+            runId,
+            article.title,
+            article.slug
+          );
           if (featuredImage) {
             imagesGenerated++;
           }
         } catch (imgError) {
-          const imgMessage = imgError instanceof Error ? imgError.message : String(imgError);
-          await logToRun(runId, "warn", `Image generation failed (non-fatal): ${imgMessage}`);
+          const imgMessage =
+            imgError instanceof Error ? imgError.message : String(imgError);
+          await logToRun(
+            runId,
+            "warn",
+            `Image generation failed (non-fatal): ${imgMessage}`
+          );
         }
 
         // Save to database
-        await prisma.blogPost.create({
-          data: {
-            slug: article.slug,
-            title: article.title,
-            content: linkedContent,
-            metaTitle: article.metaTitle,
-            metaDescription: article.metaDescription,
+        const postId = generateId();
+        await query(
+          `INSERT INTO blog_posts (id, slug, title, content, meta_title, meta_description, featured_image, category, tags, published_at, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW())`,
+          [
+            postId,
+            article.slug,
+            article.title,
+            linkedContent,
+            article.metaTitle,
+            article.metaDescription,
             featuredImage,
-            category: article.category,
-            tags: article.tags,
-            publishedAt: publishAsDraft ? null : new Date(),
-          },
-        });
+            article.category,
+            article.tags,
+            publishAsDraft ? null : new Date(),
+          ]
+        );
 
         articlesCreated++;
         await updateRunStatus(runId, "running", {
@@ -156,10 +173,14 @@ export async function runContentPipeline(
         });
       } catch (topicError) {
         errorCount++;
-        const message = topicError instanceof Error ? topicError.message : String(topicError);
-        await logToRun(runId, "error", `Failed to process topic: ${message}`, {
-          topic: topic.title,
-        });
+        const message =
+          topicError instanceof Error ? topicError.message : String(topicError);
+        await logToRun(
+          runId,
+          "error",
+          `Failed to process topic: ${message}`,
+          { topic: topic.title }
+        );
         await updateRunStatus(runId, "running", { errorCount });
       }
     }
@@ -184,7 +205,8 @@ export async function runContentPipeline(
       status: "completed",
     };
   } catch (fatalError) {
-    const message = fatalError instanceof Error ? fatalError.message : String(fatalError);
+    const message =
+      fatalError instanceof Error ? fatalError.message : String(fatalError);
     await logToRun(runId, "error", `Pipeline fatal error: ${message}`);
     await updateRunStatus(runId, "failed", {
       errorCount: errorCount + 1,
