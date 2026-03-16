@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx opennextjs-cloudflare",
+    "pages:build": "npx opennextjs-cloudflare build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
