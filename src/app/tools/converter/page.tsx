@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import {
   ArrowDownUp,
@@ -308,7 +309,7 @@ export default function ConverterPage() {
                 className="flex items-center justify-between py-2 px-3 rounded-lg bg-muted/20"
               >
                 <div className="flex items-center gap-2">
-                  <img src={c.image} alt={c.name} width={20} height={20} className="rounded-full" loading="lazy" />
+                  <Image src={c.image} alt={c.name} width={20} height={20} className="rounded-full" unoptimized />
                   <span className="text-sm font-medium">1 {c.symbol.toUpperCase()}</span>
                 </div>
                 <span className="text-sm tabular-nums text-muted-foreground">

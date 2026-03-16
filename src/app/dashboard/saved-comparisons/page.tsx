@@ -5,6 +5,8 @@ import { GitCompareArrows, Plus } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Saved Comparisons",
   description: "View and manage your saved exchange comparisons.",

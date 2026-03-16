@@ -4,6 +4,8 @@ import { getTop200 } from "@/lib/data/coingecko";
 import { PricesTable } from "@/components/prices/prices-table";
 import { Coins } from "lucide-react";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Crypto Prices — Top 200 Coins by Market Cap",
   description:

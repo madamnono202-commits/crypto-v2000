@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { SettingsForm } from "@/components/dashboard/settings-form";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Account Settings",
   description: "Manage your CryptoCompare AI account settings.",
