@@ -25,6 +25,9 @@ import {
 import { siteConfig } from "@/config/site";
 import { buildClickUrl } from "@/lib/affiliate";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 interface ExchangePageProps {
   params: { slug: string };
 }

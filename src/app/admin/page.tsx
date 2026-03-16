@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Admin dashboard for managing CryptoCompare AI.",
 };
 
+export const runtime = 'edge';
 export const dynamic = "force-dynamic";
 
 async function getDashboardStats() {

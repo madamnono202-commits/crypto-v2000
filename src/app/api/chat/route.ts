@@ -9,6 +9,8 @@ import {
 } from "@/lib/chat-context";
 import { checkRateLimit, getClientIdentifier } from "@/lib/rate-limit";
 
+export const runtime = 'edge';
+
 const CHAT_RATE_LIMIT = { limit: 20, windowSeconds: 60 };
 
 const BLOCKED_TOPICS = [

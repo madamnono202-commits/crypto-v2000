@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: "Create and manage blog content.",
 };
 
+export const runtime = 'edge';
 export const dynamic = "force-dynamic";
 
 async function getBlogPosts() {

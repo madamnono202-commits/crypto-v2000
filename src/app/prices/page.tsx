@@ -10,7 +10,8 @@ export const metadata: Metadata = {
     "Live cryptocurrency prices for the top 200 coins. Track Bitcoin, Ethereum, and altcoin prices with 24h changes, market cap, volume, and 7-day sparkline charts.",
 };
 
-export const revalidate = 120; // ISR: revalidate every 2 minutes
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export default async function PricesPage() {
   const coins = await getTop200();

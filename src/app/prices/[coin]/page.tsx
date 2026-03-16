@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button";
 import { getCoinDetail, getMarketChart } from "@/lib/data/coingecko";
 import { PriceChart } from "@/components/prices/price-chart";
 
-export const revalidate = 300; // ISR: revalidate every 5 minutes
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 type PageProps = {
   params: Promise<{ coin: string }>;

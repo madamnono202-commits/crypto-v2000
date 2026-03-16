@@ -11,6 +11,9 @@ import {
 } from "@/lib/data/blog-posts";
 import { siteConfig } from "@/config/site";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Blog",
   description:

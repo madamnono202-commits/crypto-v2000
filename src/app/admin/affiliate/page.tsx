@@ -6,6 +6,9 @@ import {
   type ClicksBySource,
 } from "@/lib/data/affiliate-analytics";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Affiliate Analytics",
   description: "View affiliate click tracking analytics.",

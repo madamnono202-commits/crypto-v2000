@@ -5,6 +5,9 @@ import { Star, GitCompareArrows, Bell, TrendingUp } from "lucide-react";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "Your CryptoCompare AI dashboard - view saved comparisons, watchlists, and price alerts.",

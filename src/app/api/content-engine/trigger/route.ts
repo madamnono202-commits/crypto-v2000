@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { runContentPipeline } from "@/lib/content-engine/pipeline";
 
+export const runtime = 'edge';
+
 /**
  * POST /api/content-engine/trigger
  *

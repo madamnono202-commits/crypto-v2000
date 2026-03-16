@@ -4,6 +4,9 @@ import { MessageSquare, ArrowLeft, Clock, Tag, ChevronRight } from "lucide-react
 import { Section } from "@/components/ui/section";
 import { prisma } from "@/lib/prisma";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Chat Conversations | Admin",
   description: "View recent AI chatbot conversation logs.",

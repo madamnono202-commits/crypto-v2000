@@ -10,6 +10,9 @@ import { RelatedPosts } from "@/components/blog/related-posts";
 import { getBlogPostBySlug, getRelatedPosts } from "@/lib/data/blog-posts";
 import { siteConfig } from "@/config/site";
 
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 interface BlogPostPageProps {
   params: { slug: string };
 }

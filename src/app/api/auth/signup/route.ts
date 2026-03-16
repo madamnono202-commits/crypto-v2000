@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
+export const runtime = 'edge';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

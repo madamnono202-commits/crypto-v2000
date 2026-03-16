@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   description: "View and manage automated content generation runs.",
 };
 
+export const runtime = 'edge';
 export const dynamic = "force-dynamic";
 
 function formatDate(date: Date | null): string {
