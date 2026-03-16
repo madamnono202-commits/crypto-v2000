@@ -7,6 +7,9 @@ import {
   formatExchangeContext,
   formatBlogContext,
 } from "@/lib/chat-context";
+import { checkRateLimit, getClientIdentifier } from "@/lib/rate-limit";
+
+const CHAT_RATE_LIMIT = { limit: 20, windowSeconds: 60 };
 
 const BLOCKED_TOPICS = [
   "financial advice",
@@ -28,6 +31,22 @@ type ConversationMessage = {
 };
 
 export async function POST(request: Request) {
+  // Rate limiting
+  const clientId = getClientIdentifier(request.headers);
+  const rateCheck = checkRateLimit(`chat:${clientId}`, CHAT_RATE_LIMIT);
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment before sending another message." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((rateCheck.resetAt - Date.now()) / 1000)),
+          "X-RateLimit-Remaining": String(rateCheck.remaining),
+        },
+      }
+    );
+  }
+
   try {
     const body = await request.json();
     const {

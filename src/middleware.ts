@@ -10,6 +10,11 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
 
+        // Protect admin routes - require admin role
+        if (pathname.startsWith("/admin")) {
+          return !!token && (token as { role?: string }).role === "admin";
+        }
+
         // Protect dashboard routes - require authentication
         if (pathname.startsWith("/dashboard")) {
           return !!token;
@@ -26,5 +31,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/admin/:path*"],
 };

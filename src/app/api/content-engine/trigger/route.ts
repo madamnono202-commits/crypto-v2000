@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { runContentPipeline } from "@/lib/content-engine/pipeline";
 
 /**
  * POST /api/content-engine/trigger
  *
  * Manually trigger the content generation pipeline.
+ * Requires admin authentication.
+ *
  * Supports two modes:
  * - "queue": Add to BullMQ queue (requires worker running)
  * - "direct": Run pipeline directly in this request (default)
@@ -12,6 +16,12 @@ import { runContentPipeline } from "@/lib/content-engine/pipeline";
  * Body: { topicLimit?: number, publishAsDraft?: boolean, mode?: "queue" | "direct" }
  */
 export async function POST(request: Request) {
+  // Require admin authentication
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = await request.json().catch(() => ({}));
     const topicLimit = typeof body.topicLimit === "number" ? body.topicLimit : 3;
