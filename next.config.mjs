@@ -4,8 +4,6 @@ const nextConfig = {
     // Exclude heavy packages not needed in the Cloudflare Worker bundle
     outputFileTracingExcludes: {
       "*": [
-        "node_modules/bullmq/**",
-        "node_modules/ioredis/**",
         "node_modules/@swc/**",
         "node_modules/esbuild/**",
         "node_modules/prisma/**",

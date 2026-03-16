@@ -33,9 +33,9 @@ export async function fetchTrendingTopics(
 
     const allTopics: TrendingTopic[] = [];
 
-    for (const query of queries) {
+    for (const q of queries) {
       const params = new URLSearchParams({
-        q: query,
+        q,
         language: "en",
         sortBy: "publishedAt",
         pageSize: "5",
@@ -48,13 +48,20 @@ export async function fetchTrendingTopics(
 
       if (!response.ok) {
         await logToRun(runId, "warn", `NewsAPI request failed: ${response.status}`, {
-          query,
+          query: q,
           status: response.status,
         });
         continue;
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        articles?: Array<{
+          title?: string;
+          description?: string;
+          source?: { name?: string };
+          url?: string;
+        }>;
+      };
       const articles = data.articles ?? [];
 
       for (const article of articles) {
@@ -69,7 +76,6 @@ export async function fetchTrendingTopics(
       }
     }
 
-    // Deduplicate by title similarity and limit
     const unique = deduplicateTopics(allTopics);
     const selected = unique.slice(0, limit);
 
@@ -106,31 +112,36 @@ function getFallbackTopics(limit: number): TrendingTopic[] {
   const fallbacks: TrendingTopic[] = [
     {
       title: "Bitcoin Price Analysis: What Traders Need to Know",
-      description: "An in-depth look at Bitcoin's current price action and what it means for traders.",
+      description:
+        "An in-depth look at Bitcoin's current price action and what it means for traders.",
       source: "CryptoCompare AI",
       url: "",
     },
     {
       title: "Top Crypto Exchanges Compared: Security and Fees in Focus",
-      description: "A comparison of the leading cryptocurrency exchanges focusing on security measures and fee structures.",
+      description:
+        "A comparison of the leading cryptocurrency exchanges focusing on security measures and fee structures.",
       source: "CryptoCompare AI",
       url: "",
     },
     {
       title: "DeFi vs Traditional Exchanges: The Future of Crypto Trading",
-      description: "Exploring how decentralized finance is reshaping the cryptocurrency trading landscape.",
+      description:
+        "Exploring how decentralized finance is reshaping the cryptocurrency trading landscape.",
       source: "CryptoCompare AI",
       url: "",
     },
     {
       title: "Cryptocurrency Regulation Updates: What Investors Should Know",
-      description: "The latest regulatory developments affecting cryptocurrency markets worldwide.",
+      description:
+        "The latest regulatory developments affecting cryptocurrency markets worldwide.",
       source: "CryptoCompare AI",
       url: "",
     },
     {
       title: "Ethereum Layer 2 Solutions: Reducing Costs for Crypto Traders",
-      description: "How Layer 2 scaling solutions are making Ethereum more accessible and affordable.",
+      description:
+        "How Layer 2 scaling solutions are making Ethereum more accessible and affordable.",
       source: "CryptoCompare AI",
       url: "",
     },

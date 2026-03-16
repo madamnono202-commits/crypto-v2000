@@ -206,10 +206,10 @@ export default async function AutomationPage() {
             <div className="p-8 text-center text-sm text-muted-foreground">
               <Bot className="h-8 w-8 mx-auto mb-3 opacity-40" />
               <p>No automation runs yet.</p>
-              <p className="mt-1">
-                Click &ldquo;Run Now&rdquo; to trigger the content generation
-                pipeline.
-              </p>
+                <p className="mt-1">
+                  Click &ldquo;Run Now&rdquo; to trigger blog generation via
+                  the Blog Generator service.
+                </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -334,8 +334,8 @@ export default async function AutomationPage() {
         )}
 
       <p className="text-center text-xs text-muted-foreground">
-        The content engine runs daily at 6:00 AM UTC when the worker is
-        active. You can also trigger runs manually.
+        Blog generation is handled by the standalone Blog Generator service.
+        Runs daily at 6:00 AM UTC via Hetzner cron. You can also trigger runs manually.
       </p>
     </div>
   );
