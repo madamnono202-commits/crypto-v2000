@@ -25,6 +25,8 @@ import {
 import { type ExchangeDetail } from "@/lib/data/exchanges";
 import { generateVsVerdict, type VsVerdict } from "@/lib/vs-verdict";
 
+export const runtime = "edge";
+
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface VsPageProps {

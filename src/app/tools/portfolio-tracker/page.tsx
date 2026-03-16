@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import Image from "next/image";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import {
@@ -370,7 +371,7 @@ export default function PortfolioTrackerPage() {
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-2">
                                 {entry.coin?.image && (
-                                  <img src={entry.coin.image} alt={entry.coin.name} width={24} height={24} className="rounded-full" loading="lazy" />
+                                  <Image src={entry.coin.image} alt={entry.coin.name} width={24} height={24} className="rounded-full" unoptimized />
                                 )}
                                 <div>
                                   <span className="font-medium">{entry.coin?.name ?? entry.coinId}</span>

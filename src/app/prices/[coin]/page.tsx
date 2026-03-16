@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { getCoinDetail, getMarketChart } from "@/lib/data/coingecko";
 import { PriceChart } from "@/components/prices/price-chart";
 
+export const runtime = "edge";
 export const revalidate = 300; // ISR: revalidate every 5 minutes
 
 type PageProps = {
@@ -218,12 +220,13 @@ export default async function CoinDetailPage({ params }: PageProps) {
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-3">
               {coin.image.large && (
-                <img
+                <Image
                   src={coin.image.large}
                   alt={coin.name}
                   width={48}
                   height={48}
                   className="rounded-full"
+                  unoptimized
                 />
               )}
               <div>
